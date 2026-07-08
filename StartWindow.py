@@ -1,13 +1,11 @@
 import arcade
 from pyglet.graphics import Batch
 
-from MainGame import Game
+from MainGame import GameMenu, BACKGROUND_TEXTURE
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Game"
-
-BACKGROUND_TEXTURE = arcade.load_texture("Pictures/texture_to_view.png")
 
 
 class Start_View(arcade.View):
@@ -38,7 +36,7 @@ class Start_View(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
-            mainGame = Game()
+            mainGame = GameMenu()
             self.window.show_view(mainGame)
 
 
