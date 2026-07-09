@@ -1,7 +1,6 @@
 import arcade
 
 from Sprites.Plane import Plane
-from Sprites.buttons import StartButton
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -14,15 +13,22 @@ class GameMenu(arcade.View):
     def __init__(self):
         super().__init__()
 
-        self.start_btn = StartButton('Pictures/start_btn.png')
-
         self.button_list = arcade.SpriteList()
+
+        self.start_btn = arcade.Sprite('Pictures/start_btn.png', 0.45)
+        self.start_btn.center_x = SCREEN_WIDTH // 2
+        self.start_btn.center_y = SCREEN_HEIGHT // 2
+        self.start_btn.top = SCREEN_HEIGHT // 2 - 125
+        self.start_btn.left = SCREEN_WIDTH // 2 - 375
+
         self.button_list.append(self.start_btn)
 
     def on_draw(self):
         self.clear()
+
         rect = arcade.rect.LRBT(0, 1920, 0, 1080)
         arcade.draw_texture_rect(BACKGROUND_TEXTURE, rect)
+
         self.button_list.draw()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
@@ -36,10 +42,9 @@ class GameMenu(arcade.View):
 class Gaming(arcade.View):
     def __init__(self):
         super().__init__()
-
-        self.plane = Plane('Pictures/plane.png')
-
         self.plane_list = arcade.SpriteList()
+
+        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150)
         self.plane_list.append(self.plane)
 
     def on_draw(self):
