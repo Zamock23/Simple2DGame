@@ -1,5 +1,8 @@
 import arcade
 
+from Sprites.Plane import Plane
+from Sprites.buttons import StartButton
+
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 SCREEN_TITLE = "Game"
@@ -11,12 +14,7 @@ class GameMenu(arcade.View):
     def __init__(self):
         super().__init__()
 
-        self.start_btn = arcade.Sprite('Pictures/start_btn.png')
-        self.start_btn.center_x = SCREEN_WIDTH // 2
-        self.start_btn.center_y = SCREEN_HEIGHT // 2
-        self.start_btn.top = SCREEN_HEIGHT // 2 + 150
-        self.start_btn.left = SCREEN_WIDTH // 2 - 550
-        self.start_btn.scale = 0.5
+        self.start_btn = StartButton('Pictures/start_btn.png')
 
         self.button_list = arcade.SpriteList()
         self.button_list.append(self.start_btn)
@@ -39,12 +37,7 @@ class Gaming(arcade.View):
     def __init__(self):
         super().__init__()
 
-        self.plane = arcade.Sprite('Pictures/plane.png')
-        self.plane.center_x = SCREEN_WIDTH // 2
-        self.plane.center_y = SCREEN_HEIGHT // 2
-        self.plane.top = SCREEN_HEIGHT // 2 + 150
-        self.plane.left = SCREEN_WIDTH // 2 - 550
-        self.plane.scale = 0.2
+        self.plane = Plane('Pictures/plane.png')
 
         self.plane_list = arcade.SpriteList()
         self.plane_list.append(self.plane)
