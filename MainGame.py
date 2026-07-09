@@ -42,9 +42,11 @@ class GameMenu(arcade.View):
 class Gaming(arcade.View):
     def __init__(self):
         super().__init__()
+        self.keys_pressed = set()
+
         self.plane_list = arcade.SpriteList()
 
-        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150)
+        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 90)
         self.plane_list.append(self.plane)
 
     def on_draw(self):
@@ -52,3 +54,13 @@ class Gaming(arcade.View):
         rect = arcade.rect.LRBT(0, 1920, 0, 1080)
         arcade.draw_texture_rect(BACKGROUND_TEXTURE, rect)
         self.plane_list.draw()
+
+    def on_update(self, delta_time):
+        self.plane_list.update(delta_time, self.keys_pressed)
+
+    def on_key_press(self, key, modifiers):
+        self.keys_pressed.add(key)
+
+    def on_key_release(self, key, modifiers):
+        if key in self.keys_pressed:
+            self.keys_pressed.remove(key)
