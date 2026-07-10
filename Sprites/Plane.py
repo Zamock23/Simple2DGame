@@ -4,7 +4,7 @@ import arcade
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-SPEED = 200
+SPEED = 150
 
 
 class Plane(arcade.Sprite):
@@ -16,15 +16,16 @@ class Plane(arcade.Sprite):
         self.center_y = y
         self.angle = angle
 
-    def update(self, delta_time: float(1 / 60), keys_pressed):
+    def update(self, delta_time, keys_pressed):
         dx, dy = 0, 0
         if arcade.key.UP in keys_pressed:
-            dx = math.cos(self.angle) * SPEED
-            dy = math.sin(self.angle) * SPEED
+            an = math.radians(self.angle)
+            dx = math.sin(an) * SPEED
+            dy = math.cos(an) * SPEED
         if arcade.key.RIGHT in keys_pressed:
-            self.angle += 5
+            self.angle += 3
         if arcade.key.LEFT in keys_pressed:
-            self.angle -= 5
+            self.angle -= 3
 
         self.center_x += dx * delta_time
         self.center_y += dy * delta_time

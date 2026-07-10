@@ -46,7 +46,7 @@ class Gaming(arcade.View):
 
         self.plane_list = arcade.SpriteList()
 
-        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 90)
+        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 0)
         self.plane_list.append(self.plane)
 
     def on_draw(self):
