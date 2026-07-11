@@ -1,6 +1,8 @@
 from random import randint, choice
 import arcade
 
+from pyglet.graphics import Batch
+
 from Sprites.Plane import Plane
 from Sprites.Enemy import Enemy
 
@@ -44,14 +46,27 @@ class GameMenu(arcade.View):
 class Gaming(arcade.View):
     def __init__(self):
         super().__init__()
+        self.batch = Batch()
+
         self.keys_pressed = set()
         self.spawn_enemy_timer = 0
 
+        self.score = 0
+
+        self.point = self.new_point()
+
+        self.score_list = arcade.SpriteList()
         self.plane_list = arcade.SpriteList()
         self.enemy_list = arcade.SpriteList()
 
+        self.score_list.append(self.point)
+
         self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 0)
         self.plane_list.append(self.plane)
+
+    def new_point(self):
+        return arcade.Sprite('Pictures/scoreSprite.png', 0.5, randint(50, SCREEN_WIDTH - 420),
+                             randint(275, SCREEN_HEIGHT - 50))
 
     def spawn_enemy(self):
         side = choice([0, SCREEN_HEIGHT])
@@ -72,6 +87,12 @@ class Gaming(arcade.View):
         arcade.draw_texture_rect(BACKGROUND_TEXTURE, rect)
         self.plane_list.draw()
         self.enemy_list.draw()
+        self.score_list.draw()
+
+        score = arcade.Text(f'{self.score}', SCREEN_WIDTH - 400, SCREEN_HEIGHT - 50, font_size=40, anchor_x='right',
+                            color=arcade.color.BLACK, bold=True, batch=self.batch)
+
+        self.batch.draw()
 
     def on_update(self, delta_time):
         self.plane_list.update(delta_time, self.keys_pressed)
@@ -88,6 +109,12 @@ class Gaming(arcade.View):
                 self.enemy_list.remove(enemy)
             elif y - 500 >= SCREEN_HEIGHT or y + 500 <= 0:
                 self.enemy_list.remove(enemy)
+
+        if arcade.check_for_collision(self.point, self.plane):
+            self.score += 1
+            self.score_list.remove(self.point)
+            self.point = self.new_point()
+            self.score_list.append(self.point)
 
     def on_key_press(self, key, modifiers):
         self.keys_pressed.add(key)

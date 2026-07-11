@@ -32,7 +32,7 @@ class Plane(arcade.Sprite):
             self.center_x = SCREEN_WIDTH - 475
         if self.center_x - 100 <= 0:
             self.center_x = 100
-        if self.center_y + 75 >= SCREEN_HEIGHT:
-            self.center_y = SCREEN_HEIGHT - 75
-        if self.center_y - 280 <= 0:
-            self.center_y = 280
+        if self.center_y + 80 >= SCREEN_HEIGHT:
+            self.center_y = SCREEN_HEIGHT - 80
+        if self.center_y - 320 <= 0:
+            self.center_y = 320
