@@ -51,6 +51,8 @@ class Gaming(arcade.View):
         self.keys_pressed = set()
         self.spawn_enemy_timer = 0
 
+        self.is_lose = False
+
         self.score = 0
 
         self.point = self.new_point()
@@ -92,9 +94,20 @@ class Gaming(arcade.View):
         score = arcade.Text(f'{self.score}', SCREEN_WIDTH - 400, SCREEN_HEIGHT - 50, font_size=40, anchor_x='right',
                             color=arcade.color.BLACK, bold=True, batch=self.batch)
 
+        if self.is_lose:
+            losing = arcade.Text(f'Ты врезался. Твой счёт {self.score}', SCREEN_WIDTH // 2 - 200,
+                                 SCREEN_HEIGHT // 2 + 300,
+                                 font_size=50, anchor_x='center', anchor_y='center',
+                                 color=arcade.color.BLACK_LEATHER_JACKET, bold=True, batch=self.batch)
+            inf_continue = arcade.Text('press space for continue', SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2,
+                                       font_size=30, anchor_x='center', anchor_y='center', color=arcade.color.GRAY,
+                                       batch=self.batch)
+
         self.batch.draw()
 
     def on_update(self, delta_time):
+        if self.is_lose:
+            return
         self.plane_list.update(delta_time, self.keys_pressed)
         self.spawn_enemy_timer += delta_time
         if self.spawn_enemy_timer >= 3:
@@ -116,8 +129,17 @@ class Gaming(arcade.View):
             self.point = self.new_point()
             self.score_list.append(self.point)
 
+        crash = arcade.check_for_collision_with_list(self.plane, self.enemy_list)
+        for enemy in crash:
+            self.is_lose = True
+            break
+
     def on_key_press(self, key, modifiers):
         self.keys_pressed.add(key)
+        if self.is_lose and key == arcade.key.SPACE:
+            self.is_lose = False
+            menu = GameMenu()
+            self.window.show_view(menu)
 
     def on_key_release(self, key, modifiers):
         if key in self.keys_pressed:
