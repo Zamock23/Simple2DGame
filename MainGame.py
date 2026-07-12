@@ -15,14 +15,24 @@ BACKGROUND_TEXTURE = arcade.load_texture("Pictures/texture_to_view.png")
 max_score = 0
 
 
+def update_max_score():
+    global max_score
+    with open('best_score.txt', 'r', encoding='utf-8') as f:
+        max_score = int(f.read())
+
+
 class GameMenu(arcade.View):
     def __init__(self, score):
         super().__init__()
         self.batch = Batch()
 
+        update_max_score()
+
         global max_score
         if score > max_score:
             max_score = score
+            with open('best_score.txt', 'w', encoding='utf-8') as f:
+                f.write(f'{max_score}')
 
         self.button_list = arcade.SpriteList()
 
