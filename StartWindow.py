@@ -41,7 +41,7 @@ class Start_View(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
-            mainGame = GameMenu()
+            mainGame = GameMenu(0)
             self.window.show_view(mainGame)
 
 

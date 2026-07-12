@@ -12,10 +12,17 @@ SCREEN_TITLE = "Game"
 
 BACKGROUND_TEXTURE = arcade.load_texture("Pictures/texture_to_view.png")
 
+max_score = 0
+
 
 class GameMenu(arcade.View):
-    def __init__(self):
+    def __init__(self, score):
         super().__init__()
+        self.batch = Batch()
+
+        global max_score
+        if score > max_score:
+            max_score = score
 
         self.button_list = arcade.SpriteList()
 
@@ -34,6 +41,11 @@ class GameMenu(arcade.View):
         arcade.draw_texture_rect(BACKGROUND_TEXTURE, rect)
 
         self.button_list.draw()
+
+        best_score = arcade.Text(f'Лучший результат: {max_score}', SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT - 50,
+                                 font_size=60, anchor_x='center', anchor_y='center', bold=True,
+                                 color=arcade.color.BLACK, batch=self.batch)
+        self.batch.draw()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         start_gaming = arcade.get_sprites_at_point((x, y), self.button_list)
@@ -138,7 +150,7 @@ class Gaming(arcade.View):
         self.keys_pressed.add(key)
         if self.is_lose and key == arcade.key.SPACE:
             self.is_lose = False
-            menu = GameMenu()
+            menu = GameMenu(self.score)
             self.window.show_view(menu)
 
     def on_key_release(self, key, modifiers):
