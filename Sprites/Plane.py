@@ -1,25 +1,33 @@
-import arcade, math
+import arcade, math, csv
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-SPEED = 150
 
 
 class Plane(arcade.Sprite):
-    def __int__(self, texture, scale, x, y, angle):
-        super().__init__(self)
-        self.texture = texture
-        self.scale = scale
-        self.center_x = x
-        self.center_y = y
-        self.angle = angle
+    def __int__(self, plane_num):
+        super().__int__()
+
+        with open('planes.csv', 'r', encoding='utf-8') as data:
+            plane_data = list(csv.reader(data, delimiter=';'))[plane_num]
+            texture = plane_data[1]
+            speed = int(plane_data[2])
+
+        self.speed = speed
+
+        self.idle_texture = arcade.texture.load_texture(f"Pictures/{texture}")
+        self.texture = self.idle_texture
+
+        self.center_x, self.center_y = SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150
+        self.angle = 0
+        self.scale = 0.2
 
     def update(self, delta_time, keys_pressed):
         dx, dy = 0, 0
         if arcade.key.UP in keys_pressed:
             an = math.radians(self.angle)
-            dx = math.sin(an) * SPEED
-            dy = math.cos(an) * SPEED
+            dx = math.sin(an) * self.speed
+            dy = math.cos(an) * self.speed
         if arcade.key.RIGHT in keys_pressed:
             self.angle += 3
         if arcade.key.LEFT in keys_pressed:

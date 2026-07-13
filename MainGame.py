@@ -34,6 +34,8 @@ class GameMenu(arcade.View):
             with open('best_score.txt', 'w', encoding='utf-8') as f:
                 f.write(f'{max_score}')
 
+        self.plane_number = 1
+
         self.button_list = arcade.SpriteList()
 
         self.start_btn = arcade.Sprite('Pictures/start_btn.png', 0.45)
@@ -44,6 +46,20 @@ class GameMenu(arcade.View):
 
         self.button_list.append(self.start_btn)
 
+        self.change_btn_right = arcade.Sprite('Pictures/change_btn.png', 0.2, SCREEN_WIDTH // 2 + 130,
+                                              SCREEN_HEIGHT // 2 + 100)
+        self.change_btn_left = arcade.Sprite('Pictures/change_btn.png', 0.2, SCREEN_WIDTH // 2 - 525,
+                                             SCREEN_HEIGHT // 2 + 100, 180)
+
+        self.button_list.append(self.change_btn_right)
+        self.button_list.append(self.change_btn_left)
+
+        self.plane_list = arcade.SpriteList()
+        self.plane_list.append(
+            arcade.Sprite('Pictures/1plane.png', 0.6, SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT // 2 + 125))
+        self.plane_list.append(
+            arcade.Sprite('Pictures/2plane.png', 0.6, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 + 150))
+
     def on_draw(self):
         self.clear()
 
@@ -52,21 +68,31 @@ class GameMenu(arcade.View):
 
         self.button_list.draw()
 
+        arcade.draw_sprite(self.plane_list[self.plane_number - 1])
+
         best_score = arcade.Text(f'Лучший результат: {max_score}', SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT - 50,
                                  font_size=60, anchor_x='center', anchor_y='center', bold=True,
                                  color=arcade.color.BLACK, batch=self.batch)
         self.batch.draw()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        change_plane_plus = arcade.get_sprites_at_point((x, y), self.button_list)
+        if self.button_list[1] in change_plane_plus and self.plane_number < len(self.plane_list):
+            self.plane_number += 1
+
+        change_plane_minus = arcade.get_sprites_at_point((x, y), self.button_list)
+        if self.button_list[2] in change_plane_minus and self.plane_number > 1:
+            self.plane_number -= 1
+
         start_gaming = arcade.get_sprites_at_point((x, y), self.button_list)
 
         if self.button_list[0] in start_gaming:
-            gaming = Gaming()
+            gaming = Gaming(self.plane_number)
             self.window.show_view(gaming)
 
 
 class Gaming(arcade.View):
-    def __init__(self):
+    def __init__(self, plane_num):
         super().__init__()
         self.batch = Batch()
 
@@ -85,7 +111,7 @@ class Gaming(arcade.View):
 
         self.score_list.append(self.point)
 
-        self.plane = Plane('Pictures/plane.png', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 0)
+        self.plane = Plane(plane_num=plane_num)
         self.plane_list.append(self.plane)
 
     def new_point(self):

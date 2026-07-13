@@ -1,5 +1,3 @@
-from random import randint
-
 import arcade, math
 
 SPEED = 300
@@ -7,12 +5,7 @@ SPEED = 300
 
 class Enemy(arcade.Sprite):
     def __int__(self, texture, scale, x, y, angle):
-        super().__init__(self)
-        self.texture = texture
-        self.scale = scale
-        self.center_x = x
-        self.center_y = y
-        self.angle = angle
+        super().__init__()
 
     def update(self, delta_time):
         an = math.radians(self.angle)

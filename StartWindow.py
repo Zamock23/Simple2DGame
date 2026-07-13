@@ -13,7 +13,7 @@ class Start_View(arcade.View):
         super().__init__()
         self.batch = Batch()
 
-        self.sprite = arcade.Sprite("Pictures/plane.png", 0.5)
+        self.sprite = arcade.Sprite("Pictures/1plane.png", 0.5)
         self.sprite.center_y, self.sprite.center_x = SCREEN_HEIGHT // 2 - 100, SCREEN_WIDTH // 2 + 200
         self.sprite.angle = 27
         self.sprite.scale = 0.65
