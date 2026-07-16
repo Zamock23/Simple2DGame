@@ -1,7 +1,10 @@
+import csv
+from itertools import count
 from random import randint, choice
 import arcade
 
 from pyglet.graphics import Batch
+from pyglet.resource import texture
 
 from Sprites.Plane import Plane
 from Sprites.Enemy import Enemy
@@ -28,11 +31,16 @@ class GameMenu(arcade.View):
 
         update_max_score()
 
+        self.block_2plane = True
+
         global max_score
         if score > max_score:
             max_score = score
             with open('best_score.txt', 'w', encoding='utf-8') as f:
                 f.write(f'{max_score}')
+
+        if max_score >= 10:
+            self.block_2plane = False
 
         self.plane_number = 1
 
@@ -86,7 +94,8 @@ class GameMenu(arcade.View):
 
         start_gaming = arcade.get_sprites_at_point((x, y), self.button_list)
 
-        if self.button_list[0] in start_gaming:
+        if self.button_list[0] in start_gaming and (
+                (self.plane_number == 2 and not self.block_2plane) or self.plane_number == 1):
             gaming = Gaming(self.plane_number)
             self.window.show_view(gaming)
 
@@ -111,7 +120,14 @@ class Gaming(arcade.View):
 
         self.score_list.append(self.point)
 
-        self.plane = Plane(plane_num=plane_num)
+        texture = ''
+        with open('planes.csv', 'r', encoding='utf-8') as f:
+            data = list(csv.reader(f, delimiter=';'))[plane_num]
+            texture = data[1]
+            self.speed = int(data[-2])
+            self.angle = int(data[-1])
+
+        self.plane = Plane(f'Pictures/{texture}', 0.2, SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 150, 0)
         self.plane_list.append(self.plane)
 
     def new_point(self):
@@ -119,17 +135,22 @@ class Gaming(arcade.View):
                              randint(275, SCREEN_HEIGHT - 50))
 
     def spawn_enemy(self):
-        side = choice([0, SCREEN_HEIGHT])
-        ans = 0
-        if side == SCREEN_HEIGHT:
-            a, b = 100, 250
-            ans = randint(a, b)
+        if self.score >= 4:
+            count = 3
         else:
-            a, b = randint(280, 360), randint(0, 70)
-            ans = choice([a, b])
-        enemy = Enemy('Pictures/enemy.png', 0.15, randint(0, SCREEN_WIDTH),
-                      side, ans)
-        self.enemy_list.append(enemy)
+            count = self.score
+        for _ in range(count + 1):
+            side = choice([0, SCREEN_HEIGHT])
+            ans = 0
+            if side == SCREEN_HEIGHT:
+                a, b = 100, 250
+                ans = randint(a, b)
+            else:
+                a, b = randint(280, 360), randint(0, 70)
+                ans = choice([a, b])
+            enemy = Enemy('Pictures/enemy.png', 0.15, randint(0, SCREEN_WIDTH),
+                          side, ans)
+            self.enemy_list.append(enemy)
 
     def on_draw(self):
         self.clear()
@@ -156,7 +177,7 @@ class Gaming(arcade.View):
     def on_update(self, delta_time):
         if self.is_lose:
             return
-        self.plane_list.update(delta_time, self.keys_pressed)
+        self.plane_list.update(delta_time, self.keys_pressed, speed=self.speed, delta_angle=self.angle)
         self.spawn_enemy_timer += delta_time
         if self.spawn_enemy_timer >= 3:
             self.spawn_enemy_timer = 0
